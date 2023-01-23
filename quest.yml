@@ -11,7 +11,3 @@ skills:
 - backend
 questDependency: docker_localsetup
 slogan: Let's get ready for...
-messages:
-  questFinished:
-    text: "Congratulations! You have finished the quest."
-    delay: 2000
