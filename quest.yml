@@ -1,0 +1,17 @@
+id: aimania_test
+title: AI Mania
+description: "When users make a mistake, it is our responsibilty to fix them. Using GPT-3, we can replace empty product descriptions."
+summary: "We have to expect every possibilty of a mistake by the user. It is our responsibity to create an application that doesn't break in case a user forgets to enter something. We can use GPT-3 to replace empty product descriptions in this case."
+level: beginner
+steps:
+- aimania_get_api_key
+- aimania_add_api_to_backend
+duration: 1
+skills:
+- backend
+questDependency: docker_localsetup
+slogan: Let's get ready for...
+messages:
+  questFinished:
+    text: "Congratulations! You have finished the quest."
+    delay: 2000

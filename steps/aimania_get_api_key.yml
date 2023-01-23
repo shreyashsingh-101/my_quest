@@ -1,0 +1,44 @@
+id: aimania_get_api_key
+learningObjectives: 
+- Create an OpenAI account and generate an API key
+hints:
+- Visit the [OpenAI API keys page](https://beta.openai.com/account/api-keys) and create a new API key.
+startFlow:
+  do:
+  - actionId: bot_message
+    params:
+      person: keen
+      messages:
+      - text: "Let's get started! While creating a new product, sometimes users might forget to add a description. We want to use GPT-3 to generate a product description if the user doesn't enter one. To do this, we need to create an OpenAI account and generate an API key. "
+        delay: 2000
+      - text: "In this step, we want to [sign up for a OpenAI](https://beta.openai.com/signup) account and create an API key on the 'API keys' page. Enter the API key in the chat below."
+        delay: 3500
+trigger:
+  type: user_message
+  params: 
+    person: keen
+  flowNode:
+    if:
+      conditions:
+      - conditionId: text_match_regex
+        params:
+          text: "${userMessageText}"
+          regex: "sk-"
+          flags: i
+      then:
+        do:
+        - actionId: bot_message
+          params:
+            person: keen
+            messages:
+            - text: "Perfect! Now let's move on to the next step."
+              delay: 1300
+        - actionId: finish_step
+      else:
+        do:
+        - actionId: bot_message
+          params:
+            person: keen
+            messages:
+            - text: "Something is wrong, the key should start with a 'sk-'. Can you try again?"
+              delay: 2500

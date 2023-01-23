@@ -1,0 +1,86 @@
+id: aimania_add_api_to_backend
+learningObjectives: 
+  - Using the GPT-3 API to generate a product description
+hints:
+  - Check if the user entered a description. If not, use the GPT-3 API to generate a description.
+startFlow:
+  do:
+    - actionId: bot_message
+      params:
+        person: keen
+        messages:
+          - text: "Now, we have to integrate the API into our backend."
+            delay: 700
+          - text: "Check for empty descriptions in the backend and use the GPT-3 API to generate a description if the user didn't enter one."
+            delay: 800
+          - text: "See the [Open AI docs](https://beta.openai.com/docs/api-reference/completions/create) for more information on how to use the API. Enter a suitable prompt to generate description from the title."
+            delay: 1000
+          - text: "Create a PR when you're done and I'll review it."
+            delay: 1300
+trigger:
+  type: github_pr_lifecycle_status
+  flowNode:
+    switch:
+      key: "${eventType}"
+      cases:
+        github_pr_opened:
+          do:
+            - actionId: github_pr_comment
+              params:
+                person: keen
+                message: "On it! I'll review the changes as soon as possible!"
+        github_pr_workflow_complete_success:
+          if:
+            conditions:
+            - conditionId: github_does_file_contain
+              equals: false
+              params:
+                fileName: 'backend/models/Item.js'
+                regex: sk-
+            then:
+              do:
+                - actionId: bot_message
+                  params:
+                    person: keen
+                    messages:
+                    - text: Looking good! You can merge the PR now.
+                      delay: 1500
+                - actionId: github_pr_approve
+                  params:
+                    person: keen
+                    message: Looking good! You can merge the PR now.
+            else:    
+              do:
+              - actionId: bot_message
+                params:
+                  person: keen
+                  messages:
+                  - text: "Oh, looks like you have hard coded the API key in the code. That's not a good idea. Use environment variables to pass the API key."
+                    delay: 1000
+              - actionId: github_pr_reject
+                params:
+                  person: keen
+                  message: "Oh, looks like you have hard coded the API key in the code. That's not a good idea. Use environment variables to pass the API key."
+        github_pr_workflow_complete_failure:
+          do:
+            - actionId: github_pr_reject
+              params:
+                person: keen
+                message: Some PR checks are failing. Please look into it and create a new PR.
+
+            - actionId: bot_message
+              params:
+                person: keen
+                messages:
+                  - text: Some PR checks are failing. Please look into it and create a new PR.
+                    delay: 2500
+        github_pr_merged:
+          do:
+            - actionId: finish_step
+
+githubActions:
+  backend:
+    capabilities:
+      - axios
+      - dotenv
+    testFile: "test.js"
